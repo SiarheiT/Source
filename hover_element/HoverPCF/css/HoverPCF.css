@@ -1,0 +1,11 @@
+div#hover_PCF_my-container svg{
+
+    pointer-events: auto !important;
+    width: 100%;
+    height: 100%;
+   
+   }
+
+   div#hover_PCF_my-container .selectableObject {
+    cursor: pointer;
+}

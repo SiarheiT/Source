@@ -1,0 +1,11 @@
+div#iFrame_PCF_my-container iframe {
+
+    pointer-events: auto !important;
+   
+   }
+
+   div#iFrame_PCF_my-container a {
+
+    pointer-events: auto !important;
+   
+   }

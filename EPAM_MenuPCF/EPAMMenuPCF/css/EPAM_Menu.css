@@ -1,0 +1,18 @@
+
+#global_menu_toggle {
+    /* Rules to fit menu into menu bar. Can be changed depending on application.
+       Please keep the button at the top right corner, without additional spacing between the button and screen boundaries.
+    */
+    float: left;
+ 
+    /* Common menu styles */
+    height: 60px;
+    background-color: #464547;
+    cursor: pointer;
+}
+
+div#global_menu_toggle img{
+
+    pointer-events: auto !important;
+   
+}

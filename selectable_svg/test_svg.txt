@@ -1,0 +1,53 @@
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'
+ style='margin: auto;  display: block; shape-rendering: auto;' width='800px' height='800px'
+  viewBox='0 0 800 800' preserveAspectRatio='xMidYMid'>
+
+  <circle id='c1' class='selectableObject' cx='200' cy='200' r='200'  fill='red' stroke='black' stroke-width='5'/>
+  <circle id='c2' class='selectableObject' cx='600' cy='600' r='200' fill='blue' stroke='white' stroke-width='5'/>
+</svg>
+
+<?xml version-'1.0' encoding='utf-8'?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'
+ style='margin: auto;  display: block; shape-rendering: auto;' width='800px' height='800px'
+  viewBox='0 0 800 800' preserveAspectRatio='xMidYMid'>
+
+  <circle id='c1' class='selectableObject' cx='60' cy='100' r='50'  fill='red' stroke='black' stroke-width='5'/>
+  <circle id='c2' class='selectableObject' cx='65' cy='300' r='60' fill='blue' stroke='white' stroke-width='5'/>
+</svg>
+
+<rect x="120" width="100" height="100" rx="15" />
+
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'
+ style='margin: auto;  display: block; shape-rendering: auto;' width='800px' height='800px'
+  viewBox='0 0 800 800' preserveAspectRatio='xMidYMid'>
+<rect id='r1' class='selectableObject' x='10' y=10 width='100' height='100' rx='15' fill='red' stroke='black' stroke-width='5'/>
+<rect id='r2' class='selectableObject' x='10' y=150 width='100' height='100' rx='15' fill='red' stroke='black' stroke-width='5'/>
+
+</svg>
+
+With({green_fill: If(DarkTheme, "#6CA889", "#CEDB56"),
+      green_border: If(DarkTheme, "#56836C", "#ACB840CC"),
+      grey_fill: If(DarkTheme, "#A0A0A0", "#E3E3E3"),
+      grey_border: If(DarkTheme, "#898989", "#C9C9C9"),
+      selection: "#76CDD8",
+      hover_selection: "#87DEE9" }, //MenuBarColor
+
+"data:image/svg+xml," & EncodeUrl("
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='margin: auto;  display: block; shape-rendering: auto;'
+
+viewBox='0 0 " & Self.Width & " " & Self.Height & " ' version='1.1' >
+  <g id='SelectionGroup' transform='matrix(" & Self.Width/800 & " 0 0 " & Self.Height /800 & " 0 0)'>
+
+     <rect id='r1' class='selectableObject' x='5' y='5' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r2' class='selectableObject' x='205' y='5' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r3' class='selectableObject' x='405' y='5' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r4' class='selectableObject' x='605' y='5' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+
+     <rect id='r5' class='selectableObject' x='605' y='405' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r6' class='selectableObject' x='405' y='405' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r7' class='selectableObject' x='205' y='405' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+     <rect id='r8' class='selectableObject' x='5' y='405' width='200' height='390' rx='10' fill='red' stroke='black' stroke-width='5'/>
+
+  </g>
+
+</svg>")

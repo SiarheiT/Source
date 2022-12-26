@@ -1,0 +1,63 @@
+div.DraftEditor-root {
+    border:none; /*  0px solid #000; */
+    
+  
+    height: 92%;
+    width: 95%;
+    overflow-y: none; 
+  }
+  
+  div.DraftEditor-editorContainer,
+  div.public-DraftEditor-content {
+    height: 100%;
+
+    font-family: 'Source Sans Pro', 'Open Sans',  Arial, sans-serif;
+    font-size: 18px;
+  }
+  div.public-DraftEditor-content {
+    padding-left: 10px;
+    line-height: 1.2;
+  }
+
+
+    div.public-DraftEditor-content li > div.public-DraftStyleDefault-block {
+      margin-top: 12px;
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+
+  div.rdw-editor-wrapper {
+    height: 94%;
+    width: 99%;
+    display:flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  div.rdw-editor-main {
+    flex-grow: 1;
+    background-color: white; /* beige; */
+  }
+  div.rdw-editor-toolbar {
+    width: 98.3%;
+    background: #EAEAEA;
+  }
+
+  div.App{
+    display: flex;
+    flex-direction: column;
+  }
+
+  div.App a.draftjsref:link, a.draftjsref:visited{
+    color: #d3d3d3;
+    font-size: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex-basis: 15px;
+
+  }
+  div.App a.draftjsref:hover {
+    color: #333333;
+  }

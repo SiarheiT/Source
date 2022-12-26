@@ -1,0 +1,61 @@
+
+svg#SVGMenuIcon{
+
+    cursor: pointer;
+    pointer-events: auto !important;
+
+
+}
+
+/*
+#svgMenuPath1,
+#svgMenuPath2,
+#svgMenuPath3 {
+  
+  animation-duration: 500ms;
+  animation-iteration-count: 3;
+  animation-timing-function: linear;
+  animation-play-state: paused;
+}
+
+#svgMenuPath1 {
+    animation-name: rollout1;
+}
+#svgMenuPath2 {
+    animation-name: rollout2;
+}
+#svgMenuPath3 {
+    animation-name: rollout3;
+}
+
+svg#SVGMenuIcon:hover #svgMenuPath1,
+svg#SVGMenuIcon:hover #svgMenuPath2,
+svg#SVGMenuIcon:hover #svgMenuPath3 {
+  animation-play-state: running;
+}
+
+@keyframes rollout1 {
+  from {
+    x: 13;
+  }
+  to {
+    x: 20;
+  }
+}
+@keyframes rollout2 {
+    from {
+      x: 13;
+    }
+    to {
+      x: 27;
+    }
+  }
+  @keyframes rollout3 {
+    from {
+      x: 13;
+    }
+    to {
+      x: 34;
+    }
+  }
+  */
