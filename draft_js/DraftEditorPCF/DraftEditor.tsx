@@ -104,7 +104,7 @@ export class DraftEditor extends React.Component<IDraftEditorProps, {editorState
         onEditorStateChange={this.onChange}
         toolbar={{
           //options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image', 'remove', 'history'],
-          options: ['blockType', 'link',   'emoji', 'inline',  'remove', 'list', 'history'],
+          options: ['blockType', 'link',   'emoji', 'inline',  'remove', 'list', 'image', 'history'],
           inline: {
             inDropdown: false,
             className: undefined,
