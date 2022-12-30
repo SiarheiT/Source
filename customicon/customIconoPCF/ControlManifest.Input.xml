@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="PCFtoolsSpace" constructor="customIconPCF" version="1.0.1" display-name-key="customIconPCF" description-key="custom Icon" control-type="standard" >
+  <control namespace="PCFtoolsSpace" constructor="customIconPCF" version="1.0.2" display-name-key="customIconPCF" description-key="custom Icon" control-type="standard" >
     <!--external-service-usage node declares whether this 3rd party PCF control is using external service or not, if yes, this control will be considered as premium and please also add the external domain it is using.
     If it is not using any external service, please set the enabled="false" and DO NOT add any domain below. The "enabled" will be false by default.
     Example1:
@@ -21,9 +21,12 @@
     <property name="svg0" display-name-key="svg_code 0" description-key="SVG content 0" of-type="Multiple" usage="input" required="true"  />
     <property name="svg1" display-name-key="svg_code 1" description-key="SVG content 1" of-type="Multiple" usage="input" required="true"  />
 
-    <property name="hoverFill" display-name-key="color to fill while hovered" description-key="hover back color" of-type="SingleLine.Text" usage="input" required="true"  />   
-    <property name="hoverColor0" display-name-key="fore color 0 while hovered" description-key="hover front color 0" of-type="SingleLine.Text" usage="input" required="true"  />  
-    <property name="hoverColor1" display-name-key="fore color 1 while hovered" description-key="hover front color 1" of-type="SingleLine.Text" usage="input" required="true"  />  
+    <property name="hoverFill" display-name-key="hover fill" description-key="hover back color" of-type="SingleLine.Text" usage="input" required="true"  />   
+    <property name="hoverColor0" display-name-key="hover color 0" description-key="hover front color 0" of-type="SingleLine.Text" usage="input" required="true"  />  
+    <property name="hoverColor1" display-name-key="hover color 1" description-key="hover front color 1" of-type="SingleLine.Text" usage="input" required="true"  />  
+    
+    <property name="title0" display-name-key="title 0" description-key="title 0" of-type="SingleLine.Text" usage="input" required="true"  />  
+    <property name="title1" display-name-key="title 1" description-key="title 1" of-type="SingleLine.Text" usage="input" required="true"  />  
 
     <property name="Color0" display-name-key="front color 0" description-key="front color 0" of-type="SingleLine.Text" usage="input" required="true" />    
     <property name="Fill0" display-name-key="back color 0" description-key="backcolor 0" of-type="SingleLine.Text" usage="input" required="true"  />   

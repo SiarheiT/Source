@@ -22,11 +22,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private fill0: string;
             private color0: string;
             private hoverColor0: string;
+            private title0: string;
 
             private svgCode1: string | null;
             private fill1: string;
             private color1: string;
             private hoverColor1: string;
+            private title1: string;
 
             private hoverFill: string;
 
@@ -219,6 +221,11 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.hoverColor0  = "green";   
 
+        if(context.parameters.title0.raw)
+            this.title0 = context.parameters.title0.raw;
+        else
+            this.title0  = "";   
+
         //svg1 params
         if(context.parameters.Color1.raw)
             this.color1 = context.parameters.Color1.raw;
@@ -234,6 +241,11 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             this.hoverColor1 = context.parameters.hoverColor1.raw;
         else
             this.hoverColor1  = "green";   
+
+        if(context.parameters.title1.raw)
+            this.title1 = context.parameters.title1.raw;
+        else
+            this.title1  = "";   
 
         //general params
         if(context.parameters.hoverFill.raw)
@@ -256,11 +268,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         if(this._value == 1)
         {
             this.the_container.style.background = this.fill1;
-            this.the_container.innerHTML = this.svgCode1!
+            this.the_container.innerHTML = this.svgCode1!;
+            this.the_container.title = this.title1
         }
         else {
-            this.the_container.style.background = this.fill0
-            this.the_container.innerHTML = this.svgCode0!
+            this.the_container.style.background = this.fill0;
+            this.the_container.innerHTML = this.svgCode0!;
+            this.the_container.title = this.title0
         }
         
         this.initSVG(false)
