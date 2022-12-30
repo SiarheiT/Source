@@ -23,14 +23,19 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private color0: string;
             private hoverColor0: string;
             private title0: string;
+            private borderColor0: string;
+            private borderHoverColor0: string;
 
             private svgCode1: string | null;
             private fill1: string;
             private color1: string;
             private hoverColor1: string;
             private title1: string;
+            private borderColor1: string;
+            private borderHoverColor1: string;
 
             private hoverFill: string;
+            private borderThickness: number;
 
             private svg: SVGGraphicsElement;
     
@@ -92,6 +97,14 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     public handleMouseStart(event: Event) {
 
         this.the_container.style.background = this.hoverFill;
+        if(this._value == 1)
+            {
+                this.the_container.style.borderColor = this.borderHoverColor1
+            }
+        else
+            {
+                this.the_container.style.borderColor = this.borderHoverColor0
+            }
         this.initSVG(true)
 
 	}     
@@ -99,10 +112,17 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     public handleMouseLeave(event: Event) {
 
         if(this._value == 1)
-        this.the_container.style.background = this.fill1
+            {
+                this.the_container.style.background = this.fill1;
+                this.the_container.style.borderColor = this.borderColor1
+            }
         else
-        this.the_container.style.background = this.fill0
+            {
+                this.the_container.style.background = this.fill0;
+                this.the_container.style.borderColor = this.borderColor0
+            }
     
+        
         this.initSVG(false)
     }
 
@@ -185,9 +205,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         // Add code to update control view
         this.the_container.style.position = 'relative';
+        if(context.parameters.borderThickness.raw)
+            this.borderThickness = context.parameters.borderThickness.raw;
+        else
+            this.borderThickness  = 0;   
 
-        this.the_container.style.height  = context.mode.allocatedHeight.toString() + "px";
-        this.the_container.style.width  = context.mode.allocatedWidth.toString() + "px";
+        this.the_container.style.height  = (context.mode.allocatedHeight-this.borderThickness*2).toString() + "px";
+        this.the_container.style.width  = (context.mode.allocatedWidth-this.borderThickness*2).toString() + "px";
 
         if(!context.parameters.svg0.raw?.startsWith("<svg ")
             && !context.parameters.svg0.raw?.endsWith("</svg>")){
@@ -226,6 +250,16 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.title0  = "";   
 
+        if(context.parameters.borderColor0.raw)
+            this.borderColor0 = context.parameters.borderColor0.raw;
+        else
+            this.borderColor0  = "black";   
+
+        if(context.parameters.borderHoverColor0.raw)
+            this.borderHoverColor0 = context.parameters.borderHoverColor0.raw;
+        else
+            this.borderHoverColor0  = "black";   
+
         //svg1 params
         if(context.parameters.Color1.raw)
             this.color1 = context.parameters.Color1.raw;
@@ -247,12 +281,25 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.title1  = "";   
 
+        if(context.parameters.borderColor1.raw)
+            this.borderColor1 = context.parameters.borderColor1.raw;
+        else
+            this.borderColor1  = "black";   
+
+        if(context.parameters.borderHoverColor1.raw)
+            this.borderHoverColor1 = context.parameters.borderHoverColor1.raw;
+        else
+            this.borderHoverColor1  = "black";   
+
+
         //general params
         if(context.parameters.hoverFill.raw)
             this.hoverFill = context.parameters.hoverFill.raw;
         else
             this.hoverFill  = "yellow";   
-        
+  
+
+
         if(context.parameters.initialValue.raw){
             if(context.parameters.initialValue.raw<=this.svgMaxID)
                 {
@@ -265,17 +312,25 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             else
             this._value = this.svgMaxID
         }
+        this.the_container.style.border = this.borderThickness +"px";
+        this.the_container.style.borderStyle = "solid";
+
         if(this._value == 1)
         {
             this.the_container.style.background = this.fill1;
             this.the_container.innerHTML = this.svgCode1!;
-            this.the_container.title = this.title1
+            this.the_container.title = this.title1;
+            this.the_container.style.borderColor = this.borderColor1
         }
         else {
             this.the_container.style.background = this.fill0;
             this.the_container.innerHTML = this.svgCode0!;
-            this.the_container.title = this.title0
+            this.the_container.title = this.title0;
+            this.the_container.style.borderColor = this.borderColor0
         }
+
+
+
         
         this.initSVG(false)
     }
