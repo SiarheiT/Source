@@ -1,7 +1,15 @@
 /* eslint-disable no-undef */
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 
-
+interface svgDataRecord  {
+     svgCode: string | null;
+     fill: string;
+     color: string;
+     hoverColor: string;
+     title: string;
+     borderColor: string;
+     borderHoverColor: string;
+}
 
 export class customIconPCF implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
@@ -11,28 +19,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private container: HTMLDivElement;
             private the_container: HTMLDivElement;
     
-
-
             private svgMaxID: number;
 
             // The callback function to call whenever your code has made a change to a bound or output property\
             private notifyOutputChanged: () => void;
  
-            private svgCode0: string | null;
-            private fill0: string;
-            private color0: string;
-            private hoverColor0: string;
-            private title0: string;
-            private borderColor0: string;
-            private borderHoverColor0: string;
-
-            private svgCode1: string | null;
-            private fill1: string;
-            private color1: string;
-            private hoverColor1: string;
-            private title1: string;
-            private borderColor1: string;
-            private borderHoverColor1: string;
+            private svgData: svgDataRecord[]=[];
+            private svg_data:  svgDataRecord;
 
             private displayMode: number = -2;
 
@@ -73,6 +66,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     {
         context.mode.trackContainerResize(true);
           
+       
+
         this.container = container;
  
          // Create main container div. 
@@ -106,14 +101,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this._is_hovered = true;
 
         this.the_container.style.background = this.hoverFill;
-        if(this._value == 1)
-            {
-                this.the_container.style.borderColor = this.borderHoverColor1
-            }
-        else
-            {
-                this.the_container.style.borderColor = this.borderHoverColor0
-            }
+  
+        this.the_container.style.borderColor = this.svg_data.borderHoverColor
+
         this.initSVG(true)
 
 	}     
@@ -121,19 +111,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     public handleMouseLeave(event: Event) {
 
         this._is_hovered = false;
-
-        if(this._value == 1)
-            {
-                this.the_container.style.background = this.fill1;
-                this.the_container.style.borderColor = this.borderColor1
-            }
-        else
-            {
-                this.the_container.style.background = this.fill0;
-                this.the_container.style.borderColor = this.borderColor0
-            }
-    
-        
+        this.the_container.style.background = this.svg_data.fill;
+        this.the_container.style.borderColor = this.svg_data.borderColor
+  
         this.initSVG(false)
     }
 
@@ -150,10 +130,10 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         if (v != this._value){
             this._value = v;
-            if(v  == 1)
-                this.the_container.innerHTML = this.svgCode1!
-            else
-                this.the_container.innerHTML = this.svgCode0!;
+            this.svg_data = this.svgData[v]
+
+            this.the_container.innerHTML = this.svg_data.svgCode!
+
             this.initSVG(true)
         }
         this.notifyOutputChanged() ;
@@ -184,41 +164,19 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                         break;
                     }
                     case 0: {
-                        if(this._value == 1)
-                            {
-                                if(to_fill) svgObj.style.fill = this.color1;
-                                if(to_stroke) svgObj.style.stroke = this.color1;
-                            }
-                        else
-                            {
-                                if(to_fill) svgObj.style.fill = this.color0;
-                                if(to_stroke) svgObj.style.stroke = this.color0;
-                            }        
+                        if(to_fill) svgObj.style.fill = this.svg_data.color;
+                        if(to_stroke) svgObj.style.stroke = this.svg_data.color;     
                         break;
                     }                  
                     default:{
                         if(hover){
-                            if(this._value == 1)
-                                {
-                                if(to_fill) svgObj.style.fill = this.hoverColor1;
-                                if(to_stroke) svgObj.style.stroke = this.hoverColor1;
-                                }
-                            else
-                            {
-                                if(to_fill) svgObj.style.fill = this.hoverColor0;
-                                if(to_stroke) svgObj.style.stroke = this.hoverColor0;
-                            }    
+
+                                if(to_fill) svgObj.style.fill = this.svg_data.hoverColor;
+                                if(to_stroke) svgObj.style.stroke = this.svg_data.hoverColor; 
                         } else {
-                            if(this._value == 1)
-                                {
-                                if(to_fill) svgObj.style.fill = this.color1;
-                                if(to_stroke) svgObj.style.stroke = this.color1;
-                                }
-                            else
-                            {
-                                if(to_fill) svgObj.style.fill = this.color0;
-                                if(to_stroke) svgObj.style.stroke = this.color0;
-                            }                           
+
+                                if(to_fill) svgObj.style.fill = this.svg_data.color;
+                                if(to_stroke) svgObj.style.stroke = this.svg_data.color;                       
                         }
                     }
                     }
@@ -245,84 +203,108 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this.the_container.style.height  = (context.mode.allocatedHeight-this.borderThickness*2).toString() + "px";
         this.the_container.style.width  = (context.mode.allocatedWidth-this.borderThickness*2).toString() + "px";
 
+        var svgCode0: string | null = "";
+        var svgCode1: string | null = "";
         if(!context.parameters.svg0.raw?.startsWith("<svg ")
             && !context.parameters.svg0.raw?.endsWith("</svg>")){
-            this.svgMaxID = -1;
-            this.svgCode0 = "";
-            this.svgCode1 = "";
+             this.svgMaxID = -1;
         } else {
-            this.svgCode0 = context.parameters.svg0.raw;
+            svgCode0 = context.parameters.svg0.raw;
             if(!context.parameters.svg1.raw?.startsWith("<svg ") 
             && !context.parameters.svg1.raw?.endsWith("</svg>")){
                 this.svgMaxID = 0;
-                this.svgCode1 = "";
             } else {
                 this.svgMaxID = 1;
-                this.svgCode1 = context.parameters.svg1.raw;
+                svgCode1 = context.parameters.svg1.raw;
             }
         }
         //svg0 params
+        var color: string;
         if(context.parameters.Color0.raw)
-            this.color0 = context.parameters.Color0.raw;
+            color = context.parameters.Color0.raw;
         else
-            this.color0  = "black";   
+            color  = "black";   
 
+        var fill: string
         if(context.parameters.Fill0.raw)
-            this.fill0 = context.parameters.Fill0.raw;
+            fill = context.parameters.Fill0.raw;
         else
-            this.fill0  = "white";  
+            fill  = "white";  
 
+        var hoverColor: string
         if(context.parameters.hoverColor0.raw)
-            this.hoverColor0 = context.parameters.hoverColor0.raw;
+            hoverColor = context.parameters.hoverColor0.raw;
         else
-            this.hoverColor0  = "green";   
+            hoverColor  = "green";   
 
+        var title: string
         if(context.parameters.title0.raw)
-            this.title0 = context.parameters.title0.raw;
+            title = context.parameters.title0.raw;
         else
-            this.title0  = "";   
+            title = "";   
 
+        var borderColor: string
         if(context.parameters.borderColor0.raw)
-            this.borderColor0 = context.parameters.borderColor0.raw;
+            borderColor = context.parameters.borderColor0.raw;
         else
-            this.borderColor0  = "black";   
+            borderColor  = "black";   
 
+        var borderHoverColor: string
         if(context.parameters.borderHoverColor0.raw)
-            this.borderHoverColor0 = context.parameters.borderHoverColor0.raw;
+            borderHoverColor = context.parameters.borderHoverColor0.raw;
         else
-            this.borderHoverColor0  = "black";   
+            borderHoverColor  = "black";   
+
+           this.svgData[0] = {
+                svgCode: svgCode0,
+                fill: fill,
+                color: color,
+                hoverColor: hoverColor,
+                title: title,
+                borderColor: borderColor,
+                borderHoverColor: borderColor
+           }
 
         //svg1 params
         if(context.parameters.Color1.raw)
-            this.color1 = context.parameters.Color1.raw;
+            color = context.parameters.Color1.raw;
         else
-            this.color1  = "black";   
+            color  = "black";   
 
         if(context.parameters.Fill1.raw)
-            this.fill1 = context.parameters.Fill1.raw;
+            fill = context.parameters.Fill1.raw;
         else
-            this.fill1  = "white";  
+            fill  = "white";  
 
         if(context.parameters.hoverColor1.raw)
-            this.hoverColor1 = context.parameters.hoverColor1.raw;
+            hoverColor = context.parameters.hoverColor1.raw;
         else
-            this.hoverColor1  = "green";   
+            hoverColor  = "green";   
 
         if(context.parameters.title1.raw)
-            this.title1 = context.parameters.title1.raw;
+            title = context.parameters.title1.raw;
         else
-            this.title1  = "";   
+            title  = "";   
 
         if(context.parameters.borderColor1.raw)
-            this.borderColor1 = context.parameters.borderColor1.raw;
+            borderColor = context.parameters.borderColor1.raw;
         else
-            this.borderColor1  = "black";   
+            borderColor  = "black";   
 
         if(context.parameters.borderHoverColor1.raw)
-            this.borderHoverColor1 = context.parameters.borderHoverColor1.raw;
+            borderHoverColor = context.parameters.borderHoverColor1.raw;
         else
-            this.borderHoverColor1  = "black";   
+            borderHoverColor  = "black";   
 
+            this.svgData[1] = {
+                svgCode: svgCode1,
+                fill: fill,
+                color: color,
+                hoverColor: hoverColor,
+                title: title,
+                borderColor: borderColor,
+                borderHoverColor: borderColor
+           }
 
         //general params
         if(context.parameters.hoverFill.raw)
@@ -380,67 +362,39 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this.the_container.style.border = this.borderThickness +"px";
         this.the_container.style.borderStyle = "solid";
 
+
         if(this._value == 1)
-        {
-            
-            this.the_container.innerHTML = this.svgCode1!;
+            this.svg_data = this.svgData[1]
+        else
+            this.svg_data = this.svgData[0];
+
+            this.the_container.innerHTML = this.svg_data.svgCode!;
             
             switch(this.displayMode){
                 case -1: {
                     this.the_container.style.background = this.disabledFill;
                     this.the_container.style.borderColor = this.disabledBorderColor;
-                    this.the_container.title = this.title1 + " (disabled)";
+                    this.the_container.title = this.svg_data.title + " (disabled)";
                     break;    
                 }
                 case 0: {
-                    this.the_container.style.background = this.fill1;
-                    this.the_container.style.borderColor = this.borderColor1;
-                    this.the_container.title = this.title1;
+                    this.the_container.style.background = this.svg_data.fill;
+                    this.the_container.style.borderColor = this.svg_data.borderColor;
+                    this.the_container.title = this.svg_data.title;
                     break;    
                 }
                 default: {
                     if(this._is_hovered){
                         this.the_container.style.background = this.hoverFill;
-                        this.the_container.style.borderColor = this.borderHoverColor1
+                        this.the_container.style.borderColor = this.svg_data.borderHoverColor
                     } else {
-                        this.the_container.style.background = this.fill1;
-                        this.the_container.style.borderColor = this.borderColor1
+                        this.the_container.style.background = this.svg_data.fill;
+                        this.the_container.style.borderColor = this.svg_data.borderColor
                     }
-                    this.the_container.title = this.title1;
+                    this.the_container.title = this.svg_data.title;
                 }
             }
 
-            
-        }
-        else {
-
-            this.the_container.innerHTML = this.svgCode0!;
-
-            switch(this.displayMode){
-                case -1: {
-                    this.the_container.style.background = this.disabledFill;
-                    this.the_container.style.borderColor = this.disabledBorderColor;
-                    this.the_container.title = this.title0 + " (disabled)";
-                    break;    
-                }
-                case 0: {
-                    this.the_container.style.background = this.fill0;
-                    this.the_container.style.borderColor = this.borderColor0;
-                    this.the_container.title = this.title0
-                    break;    
-                }
-                default: {
-                    if(this._is_hovered){
-                        this.the_container.style.background = this.hoverFill;
-                        this.the_container.style.borderColor = this.borderHoverColor0
-                    } else {
-                        this.the_container.style.background = this.fill0;
-                        this.the_container.style.borderColor = this.borderColor0
-                    }
-                    this.the_container.title = this.title0;
-                }
-            }
-        }
         
         this.initSVG(this._is_hovered)
     }
