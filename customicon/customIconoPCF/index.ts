@@ -41,6 +41,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     
             private _value: number;
             private _initialValue: number;
+            private _is_hovered: boolean;
     
                 //eventHandles to catch events
             private _handleMouseStart: EventListenerOrEventListenerObject; // (event: Event) => void;
@@ -91,10 +92,14 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         this._value =0;
         this._initialValue =-2;
+
+        this._is_hovered = false;
         //this.updateView(context);
     }
 
     public handleMouseStart(event: Event) {
+
+        this._is_hovered = true;
 
         this.the_container.style.background = this.hoverFill;
         if(this._value == 1)
@@ -110,6 +115,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 	}     
 
     public handleMouseLeave(event: Event) {
+
+        this._is_hovered = false;
 
         if(this._value == 1)
             {
@@ -317,22 +324,33 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         if(this._value == 1)
         {
-            this.the_container.style.background = this.fill1;
+            
             this.the_container.innerHTML = this.svgCode1!;
             this.the_container.title = this.title1;
-            this.the_container.style.borderColor = this.borderColor1
+            if(this._is_hovered){
+                this.the_container.style.background = this.hoverFill;
+                this.the_container.style.borderColor = this.borderHoverColor1
+            } else {
+                this.the_container.style.background = this.fill1;
+                this.the_container.style.borderColor = this.borderColor1
+            }
+            
         }
         else {
-            this.the_container.style.background = this.fill0;
+
             this.the_container.innerHTML = this.svgCode0!;
             this.the_container.title = this.title0;
-            this.the_container.style.borderColor = this.borderColor0
+
+            if(this._is_hovered){
+                this.the_container.style.background = this.hoverFill;
+                this.the_container.style.borderColor = this.borderHoverColor0
+            } else {
+                this.the_container.style.background = this.fill0;
+                this.the_container.style.borderColor = this.borderColor0
+            }
         }
-
-
-
         
-        this.initSVG(false)
+        this.initSVG(this._is_hovered)
     }
 
     /**
