@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import {IInputs, IOutputs} from "./generated/ManifestTypes"
 
@@ -33,10 +34,10 @@ export class MenuSwitch implements ComponentFramework.StandardControl<IInputs, I
      * Data-set values are not initialized here, use updateView.
      * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to property names defined in the manifest, as well as utility functions.
      * @param notifyOutputChanged A callback method to alert the framework that the control has new outputs ready to be retrieved asynchronously.
-     * @param state A piece of data that persists in one session for a single user. Can be set at any point in a controls life cycle by calling 'setControlState' in the Mode interface.
+     * @param _state A piece of data that persists in one session for a single user. Can be set at any point in a controls life cycle by calling 'setControlState' in the Mode interface.
      * @param container If a control is marked control-type='standard', it will receive an empty div element within which it can render its content.
      */
-    public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void
+    public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, _state: ComponentFramework.Dictionary, container:HTMLDivElement): void
     {
         // Add control initialization code
         this.container = container;
@@ -102,7 +103,7 @@ export class MenuSwitch implements ComponentFramework.StandardControl<IInputs, I
         this.notifyOutputChanged() ;
     }
 
-    public handleMouseClick(event: Event) {
+    public handleMouseClick(_event: Event) {
 
         this.currentState = !this.currentState
 
@@ -110,11 +111,11 @@ export class MenuSwitch implements ComponentFramework.StandardControl<IInputs, I
 
         this.notifyOutputChanged() ;
 	}  
-    public handleMouseStart(event: Event) {
+    public handleMouseStart(_event: Event) {
 
         this.the_icon_back.setAttribute('fill', this.hoverBackColor);
 	}  
-    public handleMouseLeave(event: Event) {
+    public handleMouseLeave(_event: Event) {
 
         this.the_icon_back.setAttribute('fill', this.backColor);
 	}  

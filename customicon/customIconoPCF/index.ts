@@ -34,6 +34,12 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private borderColor1: string;
             private borderHoverColor1: string;
 
+            private displayMode: number = -2;
+
+            private disabledColor: string;
+            private disabledFill: string;
+            private disabledBorderColor: string;
+
             private hoverFill: string;
             private borderThickness: number;
 
@@ -86,9 +92,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this._handleMouseLeave = this.handleMouseLeave.bind(this);
         this._handleMouseClick = this.handleMouseClick.bind(this);
 
-        this.the_container.addEventListener('click', this._handleMouseClick); 
-        this.the_container.addEventListener('mouseenter', this._handleMouseStart); 
-        this.the_container.addEventListener('mouseleave', this._handleMouseLeave); 
+
 
         this._value =0;
         this._initialValue =-2;
@@ -173,30 +177,51 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                if(svgObj != null){
                    var to_fill = (svgObj.attributes.getNamedItem("fill") != null) && (svgObj.attributes.getNamedItem("fill")?.value != "none");
                    var to_stroke = (svgObj.attributes.getNamedItem("stroke") != null) && (svgObj.attributes.getNamedItem("stroke")?.value != "none")
-                    if(hover){
-                        if(this._value == 1)
-                            {
-                            if(to_fill) svgObj.style.fill = this.hoverColor1;
-                            if(to_stroke) svgObj.style.stroke = this.hoverColor1;
-                            }
-                        else
-                           {
-                            if(to_fill) svgObj.style.fill = this.hoverColor0;
-                            if(to_stroke) svgObj.style.stroke = this.hoverColor0;
-                           }    
-                    } else {
-                        if(this._value == 1)
-                            {
-                            if(to_fill) svgObj.style.fill = this.color1;
-                            if(to_stroke) svgObj.style.stroke = this.color1;
-                            }
-                        else
-                           {
-                            if(to_fill) svgObj.style.fill = this.color0;
-                            if(to_stroke) svgObj.style.stroke = this.color0;
-                            }                           
+                   switch(this.displayMode){
+                    case -1: {
+                        if(to_fill) svgObj.style.fill = this.disabledColor;
+                        if(to_stroke) svgObj.style.stroke = this.disabledColor;    
+                        break;
                     }
-   
+                    case 0: {
+                        if(this._value == 1)
+                            {
+                                if(to_fill) svgObj.style.fill = this.color1;
+                                if(to_stroke) svgObj.style.stroke = this.color1;
+                            }
+                        else
+                            {
+                                if(to_fill) svgObj.style.fill = this.color0;
+                                if(to_stroke) svgObj.style.stroke = this.color0;
+                            }        
+                        break;
+                    }                  
+                    default:{
+                        if(hover){
+                            if(this._value == 1)
+                                {
+                                if(to_fill) svgObj.style.fill = this.hoverColor1;
+                                if(to_stroke) svgObj.style.stroke = this.hoverColor1;
+                                }
+                            else
+                            {
+                                if(to_fill) svgObj.style.fill = this.hoverColor0;
+                                if(to_stroke) svgObj.style.stroke = this.hoverColor0;
+                            }    
+                        } else {
+                            if(this._value == 1)
+                                {
+                                if(to_fill) svgObj.style.fill = this.color1;
+                                if(to_stroke) svgObj.style.stroke = this.color1;
+                                }
+                            else
+                            {
+                                if(to_fill) svgObj.style.fill = this.color0;
+                                if(to_stroke) svgObj.style.stroke = this.color0;
+                            }                           
+                        }
+                    }
+                    }
                }
            }	
 
@@ -305,7 +330,40 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.hoverFill  = "yellow";   
   
+        var newDisplayMode: number;
+        if(context.parameters.displayMode.raw != null)
+            newDisplayMode = context.parameters.displayMode.raw;
+        else
+            newDisplayMode  = 1;   
 
+        if (newDisplayMode != this.displayMode){
+            if(newDisplayMode == 1){
+                this.the_container.addEventListener('click', this._handleMouseClick); 
+                this.the_container.addEventListener('mouseenter', this._handleMouseStart); 
+                this.the_container.addEventListener('mouseleave', this._handleMouseLeave); 
+            }else {
+                this.the_container.removeEventListener('click', this._handleMouseClick); 
+                this.the_container.removeEventListener('mouseenter', this._handleMouseStart); 
+                this.the_container.removeEventListener('mouseleave', this._handleMouseLeave);                
+            }
+
+        }
+        this.displayMode = newDisplayMode;
+
+        if(context.parameters.disabledColor.raw)
+            this.disabledColor = context.parameters.disabledColor.raw;
+        else
+            this.disabledColor  = "black";   
+
+        if(context.parameters.disabledFill.raw)
+            this.disabledFill = context.parameters.disabledFill.raw;
+        else
+            this.disabledFill  = "lightgrey";   
+
+        if(context.parameters.disabledBorderColor.raw)
+            this.disabledBorderColor = context.parameters.disabledBorderColor.raw;
+        else
+            this.disabledBorderColor  = "black";   
 
         if(context.parameters.initialValue.raw){
             if(context.parameters.initialValue.raw<=this.svgMaxID)
@@ -326,27 +384,61 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         {
             
             this.the_container.innerHTML = this.svgCode1!;
-            this.the_container.title = this.title1;
-            if(this._is_hovered){
-                this.the_container.style.background = this.hoverFill;
-                this.the_container.style.borderColor = this.borderHoverColor1
-            } else {
-                this.the_container.style.background = this.fill1;
-                this.the_container.style.borderColor = this.borderColor1
+            
+            switch(this.displayMode){
+                case -1: {
+                    this.the_container.style.background = this.disabledFill;
+                    this.the_container.style.borderColor = this.disabledBorderColor;
+                    this.the_container.title = this.title1 + " (disabled)";
+                    break;    
+                }
+                case 0: {
+                    this.the_container.style.background = this.fill1;
+                    this.the_container.style.borderColor = this.borderColor1;
+                    this.the_container.title = this.title1;
+                    break;    
+                }
+                default: {
+                    if(this._is_hovered){
+                        this.the_container.style.background = this.hoverFill;
+                        this.the_container.style.borderColor = this.borderHoverColor1
+                    } else {
+                        this.the_container.style.background = this.fill1;
+                        this.the_container.style.borderColor = this.borderColor1
+                    }
+                    this.the_container.title = this.title1;
+                }
             }
+
             
         }
         else {
 
             this.the_container.innerHTML = this.svgCode0!;
-            this.the_container.title = this.title0;
 
-            if(this._is_hovered){
-                this.the_container.style.background = this.hoverFill;
-                this.the_container.style.borderColor = this.borderHoverColor0
-            } else {
-                this.the_container.style.background = this.fill0;
-                this.the_container.style.borderColor = this.borderColor0
+            switch(this.displayMode){
+                case -1: {
+                    this.the_container.style.background = this.disabledFill;
+                    this.the_container.style.borderColor = this.disabledBorderColor;
+                    this.the_container.title = this.title0 + " (disabled)";
+                    break;    
+                }
+                case 0: {
+                    this.the_container.style.background = this.fill0;
+                    this.the_container.style.borderColor = this.borderColor0;
+                    this.the_container.title = this.title0
+                    break;    
+                }
+                default: {
+                    if(this._is_hovered){
+                        this.the_container.style.background = this.hoverFill;
+                        this.the_container.style.borderColor = this.borderHoverColor0
+                    } else {
+                        this.the_container.style.background = this.fill0;
+                        this.the_container.style.borderColor = this.borderColor0
+                    }
+                    this.the_container.title = this.title0;
+                }
             }
         }
         
