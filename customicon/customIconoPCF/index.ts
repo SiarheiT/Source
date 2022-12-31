@@ -39,6 +39,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private svg: SVGGraphicsElement;
     
             private _value: number;
+            private _is_clicked: number = 0;
             private _initialValue: number;
             private _is_hovered: boolean;
     
@@ -136,6 +137,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
             this.initSVG(true)
         }
+        this._is_clicked = 1;
         this.notifyOutputChanged() ;
 	}  
 
@@ -200,8 +202,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.borderThickness  = 0;   
 
-        this.the_container.style.height  = (context.mode.allocatedHeight-this.borderThickness*2).toString() + "px";
-        this.the_container.style.width  = (context.mode.allocatedWidth-this.borderThickness*2).toString() + "px";
+        this.the_container.style.height  = context.mode.allocatedHeight.toString() + "px"; //-this.borderThickness*2
+        this.the_container.style.width  = context.mode.allocatedWidth.toString() + "px"; //-this.borderThickness*2
 
         var svgCode0: string | null = "";
         var svgCode1: string | null = "";
@@ -346,18 +348,22 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             this.disabledBorderColor = context.parameters.disabledBorderColor.raw;
         else
             this.disabledBorderColor  = "black";   
-
+        
+        
+        this._is_clicked = 0;
         if(context.parameters.initialValue.raw){
             if(context.parameters.initialValue.raw<=this.svgMaxID)
                 {
                     if(this._initialValue !=  context.parameters.initialValue.raw)
                           {
                             this._initialValue = context.parameters.initialValue.raw;
-                            this._value = this._initialValue
+                            this._value = this._initialValue;
+                            this.notifyOutputChanged() ;
                          }
                 }
             else
-            this._value = this.svgMaxID
+            {this._value = this.svgMaxID;
+             this.notifyOutputChanged()}
         }
         this.the_container.style.border = this.borderThickness +"px";
         this.the_container.style.borderStyle = "solid";
@@ -407,7 +413,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     {
         return {
             Value: this._value,
-            svgMaxID: this.svgMaxID
+            svgMaxID: this.svgMaxID,
+            IsClicked: this._is_clicked
         };
     }
 
