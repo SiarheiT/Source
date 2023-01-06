@@ -207,7 +207,7 @@ export class HoverPCF implements ComponentFramework.StandardControl<IInputs, IOu
                     // Add code to cleanup control if necessary
                     this.the_container.removeEventListener('mouseenter', this._handleMouseStart); 
                     this.the_container.removeEventListener('mouseleave', this._handleMouseLeave); 
-                    this.the_container.removeEventListener('click', this._handleMouseClick); 
+                    this.the_container.removeEventListener('mousedown', this._handleMouseClick); 
 
 
                     this.the_container.style.background = "rgba(0,0,0,0)";
@@ -238,7 +238,7 @@ export class HoverPCF implements ComponentFramework.StandardControl<IInputs, IOu
 
             this.useSvg = newUseSvg;
 
-            this.the_container.addEventListener('click', this._handleMouseClick); 
+            this.the_container.addEventListener('mousedown', this._handleMouseClick); 
             this.the_container.addEventListener('mouseenter', this._handleMouseStart); 
             this.the_container.addEventListener('mouseleave', this._handleMouseLeave); 
          }
@@ -266,7 +266,7 @@ export class HoverPCF implements ComponentFramework.StandardControl<IInputs, IOu
         // Add code to cleanup control if necessary
         this.the_container.removeEventListener('mouseenter', this._handleMouseStart); 
         this.the_container.removeEventListener('mouseleave', this._handleMouseLeave); 
-        this.the_container.removeEventListener('click', this._handleMouseClick); 
+        this.the_container.removeEventListener('mousedown', this._handleMouseClick); 
     }
 
      // Initialize SVG 
@@ -293,7 +293,7 @@ export class HoverPCF implements ComponentFramework.StandardControl<IInputs, IOu
                             svgObj.style.stroke = this.border;
     
                     // Add onclick event to SVG element
-                    svgObj.addEventListener("click", this._handleMouseClick);
+                    svgObj.addEventListener("mousedown", this._handleMouseClick);
                     svgObj.addEventListener("mouseenter", this._handleMouseStart);
                     svgObj.addEventListener("mouseleave", this._handleMouseLeave);
     
