@@ -32,13 +32,14 @@ div.DraftEditor-root {
     display:flex;
     flex-direction: column;
     flex-grow: 1;
+    background: #FFFFFF00;
   }
   div.rdw-editor-main {
     flex-grow: 1;
     background-color: white; /* beige; */
   }
   div.rdw-editor-toolbar {
-    background: #EAEAEA;
+    background: #FFFFFF00;
   }
 
   div.App{

@@ -177,7 +177,7 @@ export class SelectableSVGPCF implements ComponentFramework.StandardControl<IInp
              elementPath.style.fill = this.fillSelected;
              }
              this._value = elementRecordId;
-             console.log('selected ID ${elementRecordId}');
+             console.log(`selected ID ${elementRecordId}`);
              this._notifyOutputChanged();
              
          }
