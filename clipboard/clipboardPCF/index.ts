@@ -35,19 +35,19 @@ export class clipboardPCF implements ComponentFramework.StandardControl<IInputs,
     public updateView(context: ComponentFramework.Context<IInputs>): void
     {
         // Add code to update control view
-        if(context.parameters.Value.raw != null){
-            this.value = context.parameters.Value.raw;
+        if((context.parameters.CopyEnabled.raw != null) && (context.parameters.CopyEnabled.raw >0)){
+            if(context.parameters.Value.raw != null){
+                this.value = context.parameters.Value.raw;
+
+            } else {
+                this.value = ""
+            }
 
             copy(this.value);
-
-            // Alert the copied text
-            //alert("Copied to the text: " + this.value);
-
+            this.notifyOutputChanged();
         } else {
             this.value = ""
         }
-
-
 
     }
 
@@ -57,7 +57,7 @@ export class clipboardPCF implements ComponentFramework.StandardControl<IInputs,
      */
     public getOutputs(): IOutputs
     {
-        return {};
+        return {Value: this.value};
     }
 
     /**
