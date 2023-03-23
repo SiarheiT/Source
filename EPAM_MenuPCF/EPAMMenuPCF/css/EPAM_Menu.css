@@ -16,3 +16,7 @@ div#global_menu_toggle img{
     pointer-events: auto !important;
    
 }
+
+div#global_menu_toggle {
+    background-color: #46454700  !important;
+}

@@ -1,20 +1,23 @@
+
 import {IInputs, IOutputs} from "./generated/ManifestTypes";
 
-
+//declare const window: any;
 
 export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private my_container: HTMLDivElement;
-    private component_container: HTMLDivElement;
+    private the_container: HTMLDivElement;
 
     private script: HTMLScriptElement;
+    private script_src: string;
     private AppName: string;
     private my_button: HTMLImageElement;
 
     private AccessIssues: string;
     private IsProductionMenu: boolean;
-
-
+                                      
+    private prefix_staging: string = "https://globalmenu-stage.epm-ppa.projects.epam.com/scripts/";
+    private prefix_production: string = "https://menu.epam.com/scripts/";
 
    // private IsBossControl: boolean;
 
@@ -31,6 +34,7 @@ export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, 
 
     }
 
+
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
      * Data-set values are not initialized here, use updateView.
@@ -42,8 +46,10 @@ export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, 
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void
     {
 
+
+
         // Add control initialization code
-        this.component_container = container;
+        //this.component_container = container;
 
         context.mode.trackContainerResize(true);
         
@@ -51,12 +57,16 @@ export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, 
 
 
         this.my_container = document.createElement("div");
+        this.the_container = container;
+        
+        this.my_container.style.transformOrigin = "top left";
         
         this.my_container.setAttribute("id", "global_menu_toggle");
 
-        this.setScript();
+        this.script_src = this.setScriptSrc(context);
+        this.setScript(false);
 
-        this.AccessIssues = "Loading EPAM Menu...";
+        //this.AccessIssues = "Loading EPAM Menu...";
 
 
         this.my_button = document.createElement("img");
@@ -79,54 +89,80 @@ export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, 
 
     }
 
-    private setScript(){
+    private setScript(reset: boolean){
+
         var script: HTMLScriptElement;
 
         script = <HTMLScriptElement>document.getElementById(this.scriptID);
 
-        if (script){
+        if (script && !reset){
             this.script = script
-            this.checkAccess(this.script.src);
            // this.IsBossControl = false;
         } 
         else 
         {
             //boss loads appropriate font
             //https://github.com/Eickhel/PowerApps-samples/blob/master/PowerFont/PCF/Code/PowerFontPCF/index.ts 
+            var link = <HTMLLinkElement> document.querySelector("link#PowerFontUrl");
 
-            var link = document.createElement("link");
-            link.id = "PowerFontUrl";
-            link.rel = "stylesheet";
-            link.href = `https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap`;
-        
-            document.getElementsByTagName("head")[0].appendChild(link);
+            if(link == null){
+                link = document.createElement("link");
+                link.id = "PowerFontUrl";
+                link.rel = "stylesheet";
+                link.href = `https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap`;
+            
+                document.getElementsByTagName("head")[0].appendChild(link);
+            }
 
             //boss creates the menu script
             //this.IsBossControl = true;
-            this.script = document.createElement("script");
-            this.script.async = true;
-            this.script.crossOrigin="use-credentials";
-            this.script.setAttribute("id", this.scriptID);
-    
-            this.component_container.appendChild(this.script);
-        }
+            if(reset && (script != null)){
+                    //reset menu settings
+                    window.EpamServices = {};
 
+                    var f =<HTMLIFrameElement> document.querySelector("iframe.GlobalMenuFrame");
+                    if(f != null){
+                        f.remove()
+                    }
+                    script.remove();
+    
+                    var  s = document.head.querySelectorAll(`script[src^="${this.prefix_staging}"]`)
+                    for (let i = 0; i < s.length; i++) {
+                        let st = <HTMLScriptElement> s[i];
+                        
+                        if((st != null) && (st.id != this.scriptID)){ 
+                           // console.log(`script ${st.src}`)
+                            document.head.removeChild(st)
+                            //st.remove()
+                        }
+                    }
+                        s = document.head.querySelectorAll(`script[src^="${this.prefix_production}"]`)
+                    for (let i = 0; i < s.length; i++) {
+                        let st = <HTMLScriptElement> s[i];
+                        
+                        if((st != null) && (st.id != this.scriptID)){ 
+                           // console.log(`script ${st.src}`)
+                            document.head.removeChild(st)
+                            //st.remove()
+                        }
+                    }
+                }
+
+            }
+                this.script = document.createElement("script");
+                this.script.async = true;
+                this.script.crossOrigin="use-credentials";
+                this.script.setAttribute("id", this.scriptID);
+                this.script.src = this.script_src;
+
+                document.head.appendChild(this.script);
+            
+        
+        this.checkAccess(this.script.src);
     }
 
-    /**
-     * Called when any value in the property bag has changed. This includes field values, data-sets, global values such as container height and width, offline status, control metadata values such as label, visible, etc.
-     * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
-     */
-    public updateView(context: ComponentFramework.Context<IInputs>): void
+    public setScriptSrc(context: ComponentFramework.Context<IInputs>): string
     {
-
-        var scale: number = context.mode.allocatedWidth/60;
-
-        if (scale>0){
-            this.my_container.style.transform="scale("+ scale.toFixed(2)+")";
-           // this.my_container.style.width = context.mode.allocatedWidth +"px";
-           // this.my_container.style.height = context.mode.allocatedWidth +"px";
-        }
         
 
         if(context.parameters.AppName.raw){
@@ -142,21 +178,53 @@ export class EPAMMenuPCF implements ComponentFramework.StandardControl<IInputs, 
             this.AppName =  ""
         }
 
-        var newsrc: string;
+        var newsrc: string
+        
         if(context.parameters.IsProduction.raw && (context.parameters.IsProduction.raw == 1)){
-            newsrc = "https://menu.epam.com/scripts/menu.js" + this.AppName;
+            newsrc = this.prefix_production + "menu.js" + this.AppName
             this.IsProductionMenu = true;
         }
         else {
-            newsrc =  "https://globalmenu-stage.epm-ppa.projects.epam.com/scripts/menu.js" + this.AppName;
+            newsrc =  this.prefix_staging + "menu.js" + this.AppName
             this.IsProductionMenu = false;
         }
 
+        return newsrc
+        
+    }
+
+    /**
+     * Called when any value in the property bag has changed. This includes field values, data-sets, global values such as container height and width, offline status, control metadata values such as label, visible, etc.
+     * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
+     */
+    public updateView(context: ComponentFramework.Context<IInputs>): void
+    {
+
+        var scale: number = context.mode.allocatedWidth/60;
+
+        this.the_container.style.height = context.mode.allocatedWidth +"px";
+        this.the_container.style.width = context.mode.allocatedWidth +"px";
+
+        if (scale>0){
+            this.my_container.style.transform="scale("+ scale.toFixed(5)+")";
+            //this.the_container.style.transform="scale("+ scale.toFixed(2)+")";
+           // this.my_container.style.width = context.mode.allocatedWidth +"px";
+           // this.my_container.style.height = context.mode.allocatedWidth +"px";
+        }
+
+        var newsrc =this.setScriptSrc(context);
+
+
         if(newsrc != this.script.src){
-            this.script.src = newsrc;
-            this.checkAccess(this.script.src);
+            this.script_src = newsrc;
+            this.setScript(true);
         }
         
+        if(context.parameters.BackColor.raw){
+            this.the_container.style.backgroundColor = context.parameters.BackColor.raw
+        } else {
+            this.the_container.style.backgroundColor = "#464547"
+        }
     }
 
     /**
