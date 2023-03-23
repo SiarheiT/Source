@@ -33,6 +33,10 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private disabledFill: string;
             private disabledBorderColor: string;
 
+            private pressedColor: string;
+            private pressedFill: string;
+            private pressedBorderColor: string; 
+
             private hoverFill: string;
             private borderThickness: number;
 
@@ -42,11 +46,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private _is_clicked: number = 0;
             private _initialValue: number;
             private _is_hovered: boolean;
+            private _is_preclicked: boolean;
     
                 //eventHandles to catch events
             private _handleMouseStart: EventListenerOrEventListenerObject; // (event: Event) => void;
             private _handleMouseLeave: EventListenerOrEventListenerObject; //(event: Event) => void;
             private _handleMouseClick: EventListenerOrEventListenerObject; //(event: Event) => void;
+            private _handleMouseDown: EventListenerOrEventListenerObject; //(event: Event) => void;
     /**
      * Empty constructor.
      */
@@ -87,7 +93,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this._handleMouseStart = this.handleMouseStart.bind(this);
         this._handleMouseLeave = this.handleMouseLeave.bind(this);
         this._handleMouseClick = this.handleMouseClick.bind(this);
-
+        this._handleMouseDown = this.handleMouseDown.bind(this);
 
 
         this._value =0;
@@ -100,25 +106,43 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     public handleMouseStart(event: Event) {
 
         this._is_hovered = true;
+        this._is_preclicked = false;
 
         this.the_container.style.background = this.hoverFill;
   
         this.the_container.style.borderColor = this.svg_data.borderHoverColor
 
-        this.initSVG(true)
+        this.initSVG()
 
 	}     
+    public handleMouseDown(event: Event) {
+
+        this._is_hovered = true;
+        this._is_preclicked = true;
+
+        this.the_container.style.background = this.pressedFill;
+  
+        this.the_container.style.borderColor = this.pressedBorderColor
+
+        this.initSVG()
+
+	}    
 
     public handleMouseLeave(event: Event) {
 
         this._is_hovered = false;
+        this._is_preclicked = false;
+
         this.the_container.style.background = this.svg_data.fill;
         this.the_container.style.borderColor = this.svg_data.borderColor
   
-        this.initSVG(false)
+        this.initSVG()
     }
 
     public handleMouseClick(event: Event) {
+
+        this._is_hovered = true;
+        this._is_preclicked = false;
 
         var v = this._value;
 
@@ -135,13 +159,13 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
             this.the_container.innerHTML = this.svg_data.svgCode!
 
-            this.initSVG(true)
+            this.initSVG()
         }
         this._is_clicked = 1;
         this.notifyOutputChanged() ;
 	}  
 
-    private initSVG(hover: boolean):void 
+    private initSVG():void 
     {
 
         let _svgElement = this.the_container.querySelector("svg");
@@ -171,15 +195,19 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                         break;
                     }                  
                     default:{
-                        if(hover){
+                        if(this._is_preclicked){
+                            if(to_fill) svgObj.style.fill = this.pressedColor;
+                            if(to_stroke) svgObj.style.stroke = this.pressedColor; 
+                        } else
+                            if(this._is_hovered){
 
-                                if(to_fill) svgObj.style.fill = this.svg_data.hoverColor;
-                                if(to_stroke) svgObj.style.stroke = this.svg_data.hoverColor; 
-                        } else {
+                                    if(to_fill) svgObj.style.fill = this.svg_data.hoverColor;
+                                    if(to_stroke) svgObj.style.stroke = this.svg_data.hoverColor; 
+                            } else {
 
-                                if(to_fill) svgObj.style.fill = this.svg_data.color;
-                                if(to_stroke) svgObj.style.stroke = this.svg_data.color;                       
-                        }
+                                    if(to_fill) svgObj.style.fill = this.svg_data.color;
+                                    if(to_stroke) svgObj.style.stroke = this.svg_data.color;                       
+                            }
                     }
                     }
                }
@@ -325,15 +353,18 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                 this.the_container.addEventListener('click', this._handleMouseClick); 
                 this.the_container.addEventListener('mouseenter', this._handleMouseStart); 
                 this.the_container.addEventListener('mouseleave', this._handleMouseLeave); 
+                this.the_container.addEventListener('mousedown', this._handleMouseDown); 
             }else {
                 this.the_container.removeEventListener('click', this._handleMouseClick); 
                 this.the_container.removeEventListener('mouseenter', this._handleMouseStart); 
-                this.the_container.removeEventListener('mouseleave', this._handleMouseLeave);                
+                this.the_container.removeEventListener('mouseleave', this._handleMouseLeave);     
+                this.the_container.removeEventListener('mousedown', this._handleMouseDown);               
             }
 
         }
         this.displayMode = newDisplayMode;
 
+        //disabled
         if(context.parameters.disabledColor.raw)
             this.disabledColor = context.parameters.disabledColor.raw;
         else
@@ -349,6 +380,22 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.disabledBorderColor  = "black";   
         
+        //pressed
+
+        if(context.parameters.pressedColor.raw)
+            this.pressedColor = context.parameters.pressedColor.raw;
+        else
+            this.pressedColor  = this.disabledColor;   
+
+        if(context.parameters.pressedFill.raw)
+            this.pressedFill = context.parameters.pressedFill.raw;
+        else
+            this.pressedFill  = this.disabledFill;   
+
+        if(context.parameters.pressedBorderColor.raw)
+            this.pressedBorderColor = context.parameters.pressedBorderColor.raw;
+        else
+            this.pressedBorderColor  =this.disabledBorderColor ;   
         
         this._is_clicked = 0;
         if(context.parameters.initialValue.raw){
@@ -401,8 +448,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                 }
             }
 
-        
-        this.initSVG(this._is_hovered)
+        this._is_preclicked = false;
+        this.initSVG()
     }
 
     /**

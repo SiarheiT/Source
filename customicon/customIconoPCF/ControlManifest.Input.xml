@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="PCFtoolsSpace" constructor="customIconPCF" version="1.0.9" display-name-key="customIconPCF" description-key="custom Icon" control-type="standard" >
+  <control namespace="PCFtoolsSpace" constructor="customIconPCF" version="1.0.11" display-name-key="customIconPCF" description-key="custom Icon" control-type="standard" >
     <!--external-service-usage node declares whether this 3rd party PCF control is using external service or not, if yes, this control will be considered as premium and please also add the external domain it is using.
     If it is not using any external service, please set the enabled="false" and DO NOT add any domain below. The "enabled" will be false by default.
     Example1:
@@ -24,9 +24,14 @@
     <property name="hoverFill" display-name-key="hover fill" description-key="hover back color" of-type="SingleLine.Text" usage="input" required="true"  />   
     <property name="borderThickness" display-name-key="borderThickness" description-key="borderThickness" of-type="Whole.None" usage="input" required="true"  />   
     <property name="displayMode" display-name-key="displayMode" description-key="-1: disabled, 0: view, 1: edit" of-type="Whole.None" usage="input" required="true"  />   
+
     <property name="disabledColor" display-name-key="disabledColor" description-key="disabledColor" of-type="SingleLine.Text" usage="input" required="true" />    
     <property name="disabledFill" display-name-key="disabledFill" description-key="disabledFill" of-type="SingleLine.Text" usage="input" required="true"  />   
     <property name="disabledBorderColor" display-name-key="disabledBorderColor" description-key="disabledBorderColor" of-type="SingleLine.Text" usage="input" required="true" />    
+
+    <property name="pressedColor" display-name-key="pressedColor" description-key="pressedColor" of-type="SingleLine.Text" usage="input" required="true" />    
+    <property name="pressedFill" display-name-key="pressedFill" description-key="pressedFill" of-type="SingleLine.Text" usage="input" required="true"  />   
+    <property name="pressedBorderColor" display-name-key="pressedBorderColor" description-key="pressedBorderColor" of-type="SingleLine.Text" usage="input" required="true" />    
 
     <property name="hoverColor0" display-name-key="hover color 0" description-key="hover front color 0" of-type="SingleLine.Text" usage="input" required="true"  />  
     <property name="title0" display-name-key="title 0" description-key="title 0" of-type="SingleLine.Text" usage="input" required="true"  />  
