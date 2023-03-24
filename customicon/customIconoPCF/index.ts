@@ -18,6 +18,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             // The wrapper div element for the component\
             private container: HTMLDivElement;
             private the_container: HTMLDivElement;
+            private tmp_container: HTMLDivElement;
     
             private svgMaxID: number;
 
@@ -47,6 +48,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             private _initialValue: number;
             private _is_hovered: boolean;
             private _is_preclicked: boolean;
+            private _is_preclickable: boolean;
     
                 //eventHandles to catch events
             private _handleMouseStart: EventListenerOrEventListenerObject; // (event: Event) => void;
@@ -79,6 +81,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
  
          // Create main container div. 
          this.the_container = document.createElement("div"); 
+         this.tmp_container = document.createElement("div"); 
          
          // Create svg container div and append to main container. 
          this.the_container.className = "custom PCF icon";
@@ -104,27 +107,30 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     }
 
     public handleMouseStart(event: Event) {
+        if(!this._is_hovered ){
+            this._is_hovered = true;
+            this._is_preclicked = false;
 
-        this._is_hovered = true;
-        this._is_preclicked = false;
+            this.the_container.style.background = this.hoverFill;
+    
+            this.the_container.style.borderColor = this.svg_data.borderHoverColor
 
-        this.the_container.style.background = this.hoverFill;
-  
-        this.the_container.style.borderColor = this.svg_data.borderHoverColor
-
-        this.initSVG()
+            this.initSVG()
+        }
 
 	}     
     public handleMouseDown(event: Event) {
 
         this._is_hovered = true;
         this._is_preclicked = true;
-
+        this._is_clicked = 0;
         this.the_container.style.background = this.pressedFill;
   
         this.the_container.style.borderColor = this.pressedBorderColor
 
-        this.initSVG()
+        if(this._is_preclickable){
+            this.initSVG()
+        }
 
 	}    
 
@@ -152,23 +158,29 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                 v = 0;
             }
         }
-
+        this._is_clicked = 1;
         if (v != this._value){
             this._value = v;
             this.svg_data = this.svgData[v]
 
-            this.the_container.innerHTML = this.svg_data.svgCode!
+            this.tmp_container.innerHTML = this.svg_data.svgCode!
 
-            this.initSVG()
+            //this.initSVG()
         }
-        this._is_clicked = 1;
+        
         this.notifyOutputChanged() ;
 	}  
 
     private initSVG():void 
     {
+        var _svgElement: SVGSVGElement | null;
 
-        let _svgElement = this.the_container.querySelector("svg");
+        if(this._is_clicked == 1){
+            _svgElement = this.tmp_container.querySelector("svg");
+        } else
+           _svgElement = this.the_container.querySelector("svg");
+
+        
         if(_svgElement != null)
         {
             // The main SVG object
@@ -213,6 +225,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
                }
            }	
 
+        }
+        if(this._is_clicked == 1){
+            this.the_container.innerHTML = this.tmp_container.innerHTML
         }
     }
     /**
@@ -350,12 +365,12 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         if (newDisplayMode != this.displayMode){
             if(newDisplayMode == 1){
-                this.the_container.addEventListener('click', this._handleMouseClick); 
+                this.the_container.addEventListener('mouseup', this._handleMouseClick); 
                 this.the_container.addEventListener('mouseenter', this._handleMouseStart); 
                 this.the_container.addEventListener('mouseleave', this._handleMouseLeave); 
                 this.the_container.addEventListener('mousedown', this._handleMouseDown); 
             }else {
-                this.the_container.removeEventListener('click', this._handleMouseClick); 
+                this.the_container.removeEventListener('mouseup', this._handleMouseClick); 
                 this.the_container.removeEventListener('mouseenter', this._handleMouseStart); 
                 this.the_container.removeEventListener('mouseleave', this._handleMouseLeave);     
                 this.the_container.removeEventListener('mousedown', this._handleMouseDown);               
@@ -383,9 +398,12 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         //pressed
 
         if(context.parameters.pressedColor.raw)
-            this.pressedColor = context.parameters.pressedColor.raw;
+            {this.pressedColor = context.parameters.pressedColor.raw;
+            this._is_preclickable = true}
         else
-            this.pressedColor  = this.disabledColor;   
+            {this.pressedColor  = this.disabledColor;
+                this._is_preclickable = false;
+            }   
 
         if(context.parameters.pressedFill.raw)
             this.pressedFill = context.parameters.pressedFill.raw;
@@ -397,7 +415,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.pressedBorderColor  =this.disabledBorderColor ;   
         
-        this._is_clicked = 0;
+        
         if(context.parameters.initialValue.raw){
             if(context.parameters.initialValue.raw<=this.svgMaxID)
                 {
@@ -421,7 +439,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         else
             this.svg_data = this.svgData[0];
 
-            this.the_container.innerHTML = this.svg_data.svgCode!;
+            this.tmp_container.innerHTML = this.svg_data.svgCode!;
             
             switch(this.displayMode){
                 case -1: {
@@ -449,7 +467,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             }
 
         this._is_preclicked = false;
-        this.initSVG()
+        this._is_clicked = 1;
+        this.initSVG();
+        this._is_clicked = 0;
     }
 
     /**
