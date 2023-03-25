@@ -99,7 +99,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         this._handleMouseDown = this.handleMouseDown.bind(this);
 
 
-        this._value =0;
+        this._value =-1;
         this._initialValue =-2;
 
         this._is_hovered = false;
@@ -110,6 +110,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
         if(!this._is_hovered ){
             this._is_hovered = true;
             this._is_preclicked = false;
+            this._is_clicked = 0;
 
             this.the_container.style.background = this.hoverFill;
     
@@ -138,6 +139,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
         this._is_hovered = false;
         this._is_preclicked = false;
+        this._is_clicked = 0;
 
         this.the_container.style.background = this.svg_data.fill;
         this.the_container.style.borderColor = this.svg_data.borderColor
@@ -147,26 +149,26 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
     public handleMouseClick(event: Event) {
 
-        this._is_hovered = true;
-        this._is_preclicked = false;
+        //this._is_hovered = true;
+        //this._is_preclicked = false;
 
-        var v = this._value;
+        //var v = this._value;
 
-        if(this.svgMaxID > -1){
-            v = v+1;
-            if (v>this.svgMaxID){
-                v = 0;
-            }
-        }
+        //if(this.svgMaxID > -1){
+        //    v = v+1;
+        //    if (v>this.svgMaxID){
+        //        v = 0;
+        //    }
+       // }
         this._is_clicked = 1;
-        if (v != this._value){
-            this._value = v;
-            this.svg_data = this.svgData[v]
+       // if (v != this._value){
+       //     this._value = v;
+       //     this.svg_data = this.svgData[v]
 
-            this.tmp_container.innerHTML = this.svg_data.svgCode!
+       //     this.tmp_container.innerHTML = this.svg_data.svgCode!
 
             //this.initSVG()
-        }
+        //}
         
         this.notifyOutputChanged() ;
 	}  
@@ -175,7 +177,7 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
     {
         var _svgElement: SVGSVGElement | null;
 
-        if(this._is_clicked == 1){
+        if(this._value != this._initialValue){
             _svgElement = this.tmp_container.querySelector("svg");
         } else
            _svgElement = this.the_container.querySelector("svg");
@@ -226,8 +228,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
            }	
 
         }
-        if(this._is_clicked == 1){
-            this.the_container.innerHTML = this.tmp_container.innerHTML
+        if(this._value != this._initialValue){
+            this.the_container.innerHTML = this.tmp_container.innerHTML;
+            this._value = this._initialValue;
         }
     }
     /**
@@ -239,6 +242,8 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
 
 
         // Add code to update control view
+        this._is_clicked = 0;
+
         this.the_container.style.position = 'relative';
         if(context.parameters.borderThickness.raw)
             this.borderThickness = context.parameters.borderThickness.raw;
@@ -416,28 +421,27 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             this.pressedBorderColor  =this.disabledBorderColor ;   
         
         
-        if(context.parameters.initialValue.raw){
+        if(context.parameters.initialValue.raw !=null){
             if(context.parameters.initialValue.raw<=this.svgMaxID)
                 {
                     if(this._initialValue !=  context.parameters.initialValue.raw)
                           {
                             this._initialValue = context.parameters.initialValue.raw;
-                            this._value = this._initialValue;
                             this.notifyOutputChanged() ;
                          }
                 }
             else
-            {this._value = this.svgMaxID;
+            {this._initialValue = this.svgMaxID;
              this.notifyOutputChanged()}
         }
         this.the_container.style.border = this.borderThickness +"px";
         this.the_container.style.borderStyle = "solid";
 
 
-        if(this._value == 1)
-            this.svg_data = this.svgData[1]
-        else
-            this.svg_data = this.svgData[0];
+            if(this._initialValue == 1)
+                this.svg_data = this.svgData[1]
+            else
+                this.svg_data = this.svgData[0];
 
             this.tmp_container.innerHTML = this.svg_data.svgCode!;
             
@@ -467,9 +471,9 @@ export class customIconPCF implements ComponentFramework.StandardControl<IInputs
             }
 
         this._is_preclicked = false;
-        this._is_clicked = 1;
+
         this.initSVG();
-        this._is_clicked = 0;
+
     }
 
     /**
